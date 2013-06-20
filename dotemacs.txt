@@ -1,0 +1,369 @@
+;; backspace key
+(global-set-key [(control h)] 'delete-backward-char)
+
+; enable folder deletion in dird mode
+(setq dired-recursive-deletes 'top)
+
+;; Insert date with format
+;; ‘C-c d’: 2013.01.23
+;; ‘C-u C-c d’: 2013-01-23
+;; ‘C-u C-u C-c d’: Wednesday, 23. January 2013
+(defun insert-date (prefix)
+    "Insert the current date. With prefix-argument, use ISO format. With
+     two prefix arguments, write out the day and month name."
+    (interactive "P")
+    (let ((format (cond
+                   ((not prefix) "%Y.%m.%d")
+                   ((equal prefix '(4)) "%Y-%m-%d")
+                   ((equal prefix '(16)) "%A, %d. %B %Y")))
+          (system-time-locale "jp_JP"))
+      (insert (format-time-string format))))
+(global-set-key (kbd "C-c d") 'insert-date)
+
+;; Auto insert skeleton
+(eval-after-load 'autoinsert
+  '(define-auto-insert
+     '("\\.c\\'" . "C skeleton")
+     '("Short description: "
+       "/**\n * "
+       (file-name-nondirectory (buffer-file-name))
+       " -- " str \n
+       " *" > \n
+       " * Author: Leon (leon(at)gmail.com) " > \n
+       " * Date  : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
+       " */" > \n \n
+       "#include <stdio.h>" \n
+       "#include \""
+       (file-name-sans-extension
+        (file-name-nondirectory (buffer-file-name)))
+       ".h\"" \n \n
+       "int main(int argc, char* argv[])" \n
+       "{" > \n
+       > _ \n
+       "return 0;" > \n
+       "}" > \n)))
+
+;; upcase <-> downcase
+(eval-after-load 'autoinsert
+  '(define-auto-insert
+     '("\\.h\\'" . "Header skeleton")
+     '("Short description: "
+       "/**\n * "
+       (file-name-nondirectory (buffer-file-name))
+       " -- " str \n
+       " *" > \n
+       " * Author: Leon (leon(at)gmail.com) " > \n
+       " * Date  : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
+       " */" > \n \n
+       "#ifndef _HEADER_"
+       (upcase
+        (file-name-base (buffer-file-name)))
+       "_H_" \n
+       "#define _HEADER_"
+       (upcase
+        (file-name-base (buffer-file-name)))
+       "_H_" > \n
+       \n
+       > _ \n \n
+       "#endif /* ~_HEADER_"
+       (upcase
+        (file-name-base (buffer-file-name)))
+       "_H_ */" > \n
+       )))
+
+(eval-after-load 'autoinsert
+  '(define-auto-insert
+     '("\\.\\(CC?\\|cc\\|cxx\\|cpp\\|c++\\)\\'" . "C++ skeleton")
+     '("Short description: "
+       "/**\n * "
+       (file-name-nondirectory (buffer-file-name))
+       " -- " str \n
+       " * Author: Leon (leon(at)gmail.com) " > \n
+       " * Date  : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
+       " */" > \n \n
+       "#include <iostream>" \n \n
+       "using namespace std;" \n \n
+       "int main(int argc, char* argv[])" \n
+       "{" > \n
+       > _ \n
+       "return 0;" > \n
+       "}" > \n)))
+
+
+;; insert delimit text
+;(defun insert-delimit-text-- ()
+;  (interactive)
+;  (save-excursion
+;    (insert "------------------------")
+;   )
+;  (forward-line 1))
+;(global-set-key (kbd "C-x -") 'insert-delimit-text--)
+
+;(require 'image-dired)
+;(image-dired-standard-keymap-changes)
+
+;; load-path
+(setq load-path (cons "~/.emacs.d/config/" load-path))
+
+; loads ruby mode when a .rb file is opened.
+(add-to-list 'load-path "~/.emacs.d/config/ruby/")
+(add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
+(autoload 'ruby-mode "ruby-mode" "Major mode for editing Ruby code" t)
+(add-hook 'ruby-mode-hook (lambda () (local-set-key "\r" 'newline-and-indent)))
+(require 'inf-ruby) ;; running ruby in emacs
+
+;; view .class file without junk symbols
+(add-to-list 'file-name-handler-alist '("\\.class$" . javap-handler))
+(defun javap-handler (op &rest args)
+  "Handle .class files by putting the output of javap in the buffer."
+  (cond
+   ((eq op 'get-file-buffer)
+    (let ((file (car args)))
+      (with-current-buffer (create-file-buffer file)
+        (call-process "javap" nil (current-buffer) nil "-verbose"
+                      "-classpath" (file-name-directory file)
+                      (file-name-sans-extension
+                       (file-name-nondirectory file)))
+        (setq buffer-file-name file)
+        (setq buffer-read-only t)
+        (set-buffer-modified-p nil)
+        (goto-char (point-min))
+        (java-mode)
+        (current-buffer))))
+   ((javap-handler-real op args))))
+(defun javap-handler-real (operation args)
+  "Run the real handler without the javap handler installed."
+  (let ((inhibit-file-name-handlers
+         (cons 'javap-handler
+               (and (eq inhibit-file-name-operation operation)
+                    inhibit-file-name-handlers)))
+        (inhibit-file-name-operation operation))
+    (apply operation args)))
+
+;; 対応する括弧を色付け
+(setq show-paren-delay 0)           ; 初期値は 0.125
+(setq show-paren-style 'expression) ; 括弧内も強調表示
+(show-paren-mode t)                 ; 有効化
+
+;; Highlight "TODO:", "FIXME:", "BUG:" in C, Text mode
+(add-hook 'c-mode-common-hook
+               (lambda ()
+                (font-lock-add-keywords nil
+                 '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
+(add-hook 'text-mode-hook
+               (lambda ()
+                (font-lock-add-keywords nil
+                 '(("\\<\\(FIXME\\|TODO\\|BUG\\|MEMO\\|INFO\\):" 1 font-lock-warning-face t)))))
+
+(defun add-quotes-to-font-lock-keywords ()
+  (font-lock-add-keywords nil '(("\"\\(\\(?:.\\|\n\\)*?[^\\]\\)\"" 0 font-lock-string-face))))
+(add-hook 'text-mode-hook 'add-quotes-to-font-lock-keywords)
+
+;; 文字列は 80 文字で折り返し(RFC2822)
+(setq-default fill-column 80)
+(setq paragraph-start '"^\\([ 　・○<\t\n\f]\\|(?[0-9a-zA-Z]+)\\)")
+(setq-default auto-fill-mode nil)
+
+;; delete spaces end
+(defvar my:delete-trailing-whitespace-exclude-suffix
+  (list "\\.rd$" "\\.md$" "\\.rbt$"))
+(defun my:delete-trailing-whitespace ()
+  (interactive)
+  (cond
+   ((equal nil
+           (loop for pattern in my:delete-trailing-whitespace-exclude-suffix
+                 thereis (string-match pattern buffer-file-name)))
+    (delete-trailing-whitespace))))
+(add-hook 'before-save-hook 'my:delete-trailing-whitespace)
+
+;; Don't display start-page
+(setq inhibit-startup-message t)
+
+;; Hide menu-bar
+;;(tool-bar-mode -1)
+
+;; Show Column-No
+(setq column-number-mode t)
+
+;; K&R StyleCC mode config
+(require 'cc-mode)
+(setq c-default-style "k&r")
+(add-hook 'c-mode-common-hook
+          '(lambda ()
+            (progn
+              (c-toggle-hungry-state 1)
+              (setq c-basic-offset 4 indent-tabs-mode nil))))
+(setq auto-mode-alist
+     (append
+      '(("\\.hpp$" . c++-mode)
+        ("\\.h$"   . c++-mode)
+        ) auto-mode-alist))
+
+;; auto-indent with RET
+;;(global-set-key "\C-m" 'reindent-then-newline-and-indent)
+(global-set-key "\C-j" 'newline)
+
+;; Window configuration
+(if window-system (progn
+ (setq initial-frame-alist '((width . 100) (height . 50) (top . 0) (left .
+0)))
+))
+
+
+;;; uncomment this line to disable loading of "default.el" at startup
+;; (setq inhibit-default-init t)
+
+;; enable visual feedback on selections
+;(setq transient-mark-mode t)
+
+;; default to better frame titles
+;;(setq frame-title-format
+;;      (concat  "%b - %f @ emacs @" (system-name)))
+(setq frame-title-format "%b - %f @ emacs")
+
+;; default to unified diffs
+(setq diff-switches "-u")
+
+;; always end a file with a newline
+;(setq require-final-newline 'query)
+
+;;; uncomment for CJK utf-8 support for non-Asian users
+;; (require 'un-define)
+
+;;;; show line numbers
+(setq column-number-mode t)
+(setq line-number-mode t)
+
+;;;; show data and time
+(setq display-time-24hr-format t)
+(setq display-time-day-and-date t)
+(display-time)
+
+;;;;set kill ring
+(setq kill-ring-max 150)
+
+;;;; Move the mouse when it goes near to the cursor
+(mouse-avoidance-mode 'animate)
+
+;;;;Emacs Server
+;;(server-start)
+
+;;;;Emacs Plan
+;;;;(plan)
+
+;;;;High light current line
+(require 'hl-line)
+(global-hl-line-mode t)
+
+;;;;Enable scroll left and right：C-x <  or  C-x >
+(put 'scroll-left 'disabled nil)
+
+;; Configure the shell color
+(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+(setq ansi-color-for-comint-mode t)
+
+;;;; save all the documents editing when exiting
+;;(load "desktop")
+;;(desktop-save-mode)
+;;(desktop-read)
+
+;;cscope
+;;(require 'xcscope)
+
+;; default directory
+;(setq default-directory "/Users/leon.he/Business")
+;(add-to-list 'load-path "/Users/leon.he/")
+
+;; disable bell sound when error happens
+(setq visible-bell t)
+
+;; View image
+(setq auto-image-file-mode t)
+
+(transient-mark-mode t)
+
+;;diable backup file func
+(setq make-backup-files nil)
+
+;(setq default-frame-alist (background-color "black"))
+;(setq default-frame-alist
+;      '((foreground-color . "black")
+;    (background-color . "ivory3")
+;)
+
+;;(setq default-frame-alist
+;      '((foreground-color . "black")
+;    (background-color . "ivory3")
+;    (top . 2 )
+;    (left . 365)
+;    (width . 80)
+;    (height . 43)))
+;)
+
+;;; uncomment this line to disable loading of "default.el" at startup
+;; (setq inhibit-default-init t)
+
+;; enable visual feedback on selections
+;(setq transient-mark-mode t)
+
+;; default to unified diffs
+(setq diff-switches "-u")
+
+;; always end a file with a newline
+;(setq require-final-newline 'query)
+
+;;; uncomment for CJK utf-8 support for non-Asian users
+;; (require 'un-define)
+
+;;; mac back key
+(global-set-key (kbd "<delete>") 'delete-char)
+(global-set-key [(control h)] 'delete-backward-char)
+
+;;cscope
+;;(require 'xcscope)
+
+(transient-mark-mode t)
+
+;(setq default-frame-alist (background-color "black"))
+;(setq default-frame-alist
+;      '((foreground-color . "black")
+;    (background-color . "ivory3")
+;)
+
+;;(setq default-frame-alist
+;      '((foreground-color . "black")
+;    (background-color . "ivory3")
+;    (top . 2 )
+;    (left . 365)
+;    (width . 80)
+;    (height . 43)))
+;)
+;;indent設定
+(setq-default indent-tabs-mode nil) ; タブを入力したときにスペースに変換する
+(setq-default tab-width 4)
+
+(setq indent-line-function 'indent-relative-maybe)
+(add-hook 'c-mode-common-hook
+      '(lambda ()
+         (setq c-auto-newline t)    ; これは・・・なんだったか忘れてもうた
+         (c-set-style "stroustrup")
+         (setq c-basic-offset 4)))  ; タブ幅を半角スペース4つ分に
+
+(put 'narrow-to-region 'disabled nil)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(column-number-mode t)
+ '(display-battery-mode t)
+ '(display-time-mode t)
+ '(tool-bar-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

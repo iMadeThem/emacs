@@ -1,0 +1,26 @@
+・M(Esc)-^
+  runs the command delete-indentation, which is an interactive compiled Lisp function in `simple.el'.
+・M(Esc)-\
+  delete leading white space
+・M-Space
+  Fixup white space between objects around point. Leave one space or none, according to the context.
+・Ctrl-x l(L)
+  see how many lines are there in the present page
+・M(Esc)-g g
+  Alt-x goto-line
+・Alt(Esc)+/
+  prompt proper variables in the file
+・Ctrl + \(back slash)
+  change input method if there are others
+・Ctrl + Shift + \
+  undo/ redo(input other cmd after undo, it will be redo)
+・Ctrl-x 8 <RET> theta <RET> or C-x 8 <RET> 398 <RET>
+  input unicode, Θ
+    3a9 : Ω
+    http://www.fileformat.info/info/unicode/char/search.htm
+・Ctrl-u 80 C-x f
+  set line length as 80
+・M(Esc)-q
+  To change existing text where the cursor exists to the new length (eg. 80)
+・Ctrl-x i
+  insert content from file
