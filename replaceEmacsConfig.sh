@@ -1,4 +1,8 @@
-#!/bin/sh
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
 NOW=$(date +"%Y%m%d")
 DOTEMACS=~/.emacs
 DOTEMACSDOTD=~/.emacs.d
