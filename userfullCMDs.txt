@@ -24,3 +24,7 @@
   To change existing text where the cursor exists to the new length (eg. 80)
 ・Ctrl-x i
   insert content from file
+・Ctrl-x <RET> f unix <RET> : change file format to unix format, the same as vi's ":set ff=unix"
+    M-x set-buffer-file-coding-system RET undecided-unix
+・C-x TAB
+  indents marked lines of text one space.
