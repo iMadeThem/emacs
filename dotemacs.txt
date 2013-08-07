@@ -29,8 +29,8 @@
        (file-name-nondirectory (buffer-file-name))
        " -- " str \n
        " *" > \n
-       " * Author: Leon (leon(at)gmail.com) " > \n
-       " * Date  : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
+       " * Copyright (c) Leon (yong.he1982(at)gmail.com) " > \n
+       " * Date : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
        " */" > \n \n
        "#include <stdio.h>" \n
        "#include \""
@@ -41,7 +41,7 @@
        "{" > \n
        > _ \n
        "return 0;" > \n
-       "}" > \n)))
+       "} ///:~" > \n)))
 
 ;; upcase <-> downcase
 (eval-after-load 'autoinsert
@@ -52,8 +52,8 @@
        (file-name-nondirectory (buffer-file-name))
        " -- " str \n
        " *" > \n
-       " * Author: Leon (leon(at)gmail.com) " > \n
-       " * Date  : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
+       " * Copyright (c) Leon (yong.he1982(at)gmail.com) " > \n
+       " * Date : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
        " */" > \n \n
        "#ifndef _HEADER_"
        (upcase
@@ -78,8 +78,9 @@
        "/**\n * "
        (file-name-nondirectory (buffer-file-name))
        " -- " str \n
-       " * Author: Leon (leon(at)gmail.com) " > \n
-       " * Date  : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
+       " *" > \n
+       " * Copyright (c) Leon (yong.he1982(at)gmail.com) " > \n
+       " * Date : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
        " */" > \n \n
        "#include <iostream>" \n \n
        "using namespace std;" \n \n
@@ -87,7 +88,7 @@
        "{" > \n
        > _ \n
        "return 0;" > \n
-       "}" > \n)))
+       "} ///:~" > \n)))
 
 (eval-after-load 'autoinsert
   '(define-auto-insert
@@ -289,8 +290,8 @@
 ;;(require 'xcscope)
 
 ;; default directory
-;(setq default-directory "/Users/leon.he/Business")
-;(add-to-list 'load-path "/Users/leon.he/")
+;(setq default-directory "/Users/user/Business")
+;(add-to-list 'load-path "/Users/user/")
 
 ;; disable bell sound when error happens
 (setq visible-bell t)

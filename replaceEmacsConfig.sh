@@ -2,10 +2,10 @@
 NOW=$(date +"%Y%m%d")
 DOTEMACS=~/.emacs
 DOTEMACSDOTD=~/.emacs.d
+HOME_PATH=`eval echo ~$USER`
 
 echo "This will replace the emacs setting under you home folder: .emacs, .emacs.d/ !"
 echo "Press Y to continue, other to abort: "
-
 
 read input
 
