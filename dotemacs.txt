@@ -73,7 +73,7 @@
 
 (eval-after-load 'autoinsert
   '(define-auto-insert
-     '("\\.\\(CC?\\|cc\\|cxx\\|cpp\\|c++\\)\\'" . "C++ skeleton")
+     '("\\.cpp\\'" . "C++ skeleton") ;;     '("\\.\\(CC?\\|cc\\|cxx\\|cpp\\|c++\\)\\'" . "C++ skeleton")
      '("Short description: "
        "/**\n * "
        (file-name-nondirectory (buffer-file-name))
