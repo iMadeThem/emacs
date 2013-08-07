@@ -39,3 +39,71 @@
   Convert region to lower case (downcase-region).
 ・C-x C-u
   Convert region to upper case (upcase-region).
+---------- Find and replace mode ----------
+・M(Esc)-% string <RET> newstring <RET>
+  Replace some occurrences of string with newstring.
+・C-M-% regexp <RET> newstring <RET>
+  Replace some matches for regexp with newstring.
+・<SPC>
+  to replace the occurrence with newstring.
+・<DEL>
+  to skip to the next occurrence without replacing this one.
+・, (Comma)
+  to replace this occurrence and display the result. You are then asked for another input character
+to say what to do next. Since the replacement has already been made, <DEL> and <SPC> are equivalent
+in this situation; both move to the next occurrence.  You can type C-r at this point (see below) to
+alter the replaced text. You can also type C-x u to undo the replacement; this exits the
+query-replace, so if you want to do further replacement you must use C-x <ESC>
+<ESC> <RET> to restart
+・<RET>  or  .(Period)
+  to exit without doing any more replacements.
+・!
+  to replace all remaining occurrences without asking again.
+・Y (Upper-case)
+  to replace all remaining occurrences in all remaining buffers in multi-buffer replacements (like
+the Dired `Q' command which performs query replace on selected files). It answers this question and
+all subsequent questions in the series with "yes", without further user interaction.
+・N (Upper-case)
+  to skip to the next buffer in multi-buffer replacements without replacing remaining occurrences in
+the current buffer. It answers this question "no", gives up on the questions for the current buffer,
+and continues to the next buffer in the sequence.
+・^
+  to go back to the position of the previous occurrence (or what used to be an occurrence), in case
+you changed it by mistake or want to reexamine it.
+・C-r
+  to enter a recursive editing level, in case the occurrence needs to be edited rather than just
+replaced with newstring. When you are done, exit the recursive editing level with "M(Esc) C-c"
+(C-M-c) to proceed to the next occurrence.
+・C-w
+  to delete the occurrence, and then enter a recursive editing level as in C-r. Use the recursive
+edit to insert text to replace the deleted occurrence of string. When done, exit the recursive
+editing level with C-M-c to proceed to the next occurrence.
+・e
+  to edit the replacement string in the minibuffer. When you exit the minibuffer by typing <RET>,
+the minibuffer contents replace the current occurrence of the pattern. They also become the new
+replacement string for any further occurrences.
+・
+・
+・
+・
+・
+・
+・
+・
+・
+・
+・
+・
+・
+・
+・
+
+・
+・
+・
+・
+・
+・
+・
+・
+・
