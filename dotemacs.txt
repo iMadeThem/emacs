@@ -31,6 +31,13 @@
        " *" > \n
        " * Copyright (c) Leon (yong.he1982(at)gmail.com) " > \n
        " * Date : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
+       " *" > \n
+       " * Build:" > \n
+       " *   cc "
+       (file-name-nondirectory (buffer-file-name))
+       " -o "
+       (file-name-sans-extension
+        (file-name-nondirectory (buffer-file-name))) > \n
        " */" > \n \n
        "#include <stdio.h>" \n
        "#include \""
@@ -65,7 +72,7 @@
        "_H_" > \n
        \n
        > _ \n \n
-       "#endif /* ~_HEADER_"
+       "#endif /* :~_HEADER_"
        (upcase
         (file-name-base (buffer-file-name)))
        "_H_ */" > \n
@@ -81,6 +88,13 @@
        " *" > \n
        " * Copyright (c) Leon (yong.he1982(at)gmail.com) " > \n
        " * Date : " (format-time-string "%Y-%m-%d [%A, %j]") > \n
+       " *" > \n
+       " * Build:" > \n
+       " *   g++ "
+       (file-name-nondirectory (buffer-file-name))
+       " -o "
+       (file-name-sans-extension
+        (file-name-nondirectory (buffer-file-name))) > \n
        " */" > \n \n
        "#include <iostream>" \n \n
        "using namespace std;" \n \n
@@ -126,6 +140,7 @@
 ; loads ruby mode when a .rb file is opened.
 (add-to-list 'load-path "~/.emacs.d/config/ruby/")
 (add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
 (autoload 'ruby-mode "ruby-mode" "Major mode for editing Ruby code" t)
 (add-hook 'ruby-mode-hook (lambda () (local-set-key "\r" 'newline-and-indent)))
 (require 'inf-ruby) ;; running ruby in emacs
@@ -177,10 +192,10 @@
   (font-lock-add-keywords nil '(("\"\\(\\(?:.\\|\n\\)*?[^\\]\\)\"" 0 font-lock-string-face))))
 (add-hook 'text-mode-hook 'add-quotes-to-font-lock-keywords)
 
-;; 文字列は 80 文字で折り返し(RFC2822)
+;; Automatic return when column reaches 80 characters limit(RFC2822)
 (setq-default fill-column 80)
 (setq paragraph-start '"^\\([ 　・○<\t\n\f]\\|(?[0-9a-zA-Z]+)\\)")
-(setq-default auto-fill-mode nil)
+(setq-default auto-fill-mode 1)
 
 ;; delete spaces end
 (defvar my:delete-trailing-whitespace-exclude-suffix
@@ -290,8 +305,8 @@
 ;;(require 'xcscope)
 
 ;; default directory
-;(setq default-directory "/Users/user/Business")
-;(add-to-list 'load-path "/Users/user/")
+(setq default-directory "~/Business")
+;(add-to-list 'load-path "~/")
 
 ;; disable bell sound when error happens
 (setq visible-bell t)
