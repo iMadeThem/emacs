@@ -377,11 +377,34 @@
 (setq-default tab-width 4)
 
 (setq indent-line-function 'indent-relative-maybe)
+
+;; C style
 (add-hook 'c-mode-common-hook
-      '(lambda ()
-         (setq c-auto-newline t)    ; これは・・・なんだったか忘れてもうた
-         (c-set-style "stroustrup")
-         (setq c-basic-offset 4)))  ; タブ幅を半角スペース4つ分に
+            '(lambda ()
+                    (setq indent-tabs-mode t)
+                         (setq c-auto-newline nil) ;; t -> nil
+                              (setq c-hanging-braces-alist '((brace-list-open)
+                                                             (brace-entry-open)
+                                                             (substatement-open after)
+                                                             (block-close . c-snug-do-while)
+                                                             (extern-lang-open after)
+                                                             (inexpr-class-open after)
+                                                             (inexpr-class-close before)))
+                              (setq c-basic-offset 4)
+                              (setq c-indent-level 4)
+                              (setq c-tab-width 4)
+                              (define-key c-mode-base-map "\C-j" 'newline-and-indent)
+                              )
+            )
+
+;; C++ style
+(add-hook 'c++-mode-hook
+          '(lambda()
+             (c-set-style "stroustrup")
+             (setq indent-tabs-mode nil)     ; インデントは空白文字で行う（TABコードを空白に変換）
+             (c-set-offset 'innamespace 0)   ; namespace {}の中はインデントしない
+             (c-set-offset 'arglist-close 0) ; 関数の引数リストの閉じ括弧はインデントしない
+             ))
 
 (put 'narrow-to-region 'disabled nil)
 
